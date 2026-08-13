@@ -29,6 +29,19 @@ number.
 DeConcini: Cars 10m, SENTRI closed, Pedestrians 0m | Mariposa: Cars closed, Pedestrians closed
 ```
 
+**Live on the mesh:**
+
+```
+> /bwt
+DeConcini: Cars 30m, SENTRI 30m, Pedestrians 10m | Mariposa: Cars 20m, Pedestrians 0m
+```
+
+![Example reply on the mesh, showing /bwt triggering a DeConcini and Mariposa wait time report](docs/example-reply.png)
+
+(The `SNR`/`RSSI` line your Meshtastic client shows under a reply is
+radio telemetry the client adds automatically — it's not part of the
+script's output.)
+
 **Example output (querying a specific registered port):**
 
 ```
@@ -75,12 +88,13 @@ Mariposa: Cars closed, Pedestrians closed
 4. In the MeshMonitor UI: **Dashboard → Sources → Edit Source → Auto-Responder**
    (configured per-source in MeshMonitor 4.0+), add a trigger:
 
-   - **Trigger pattern:** `border, crossing, line, garita`
+   - **Trigger pattern:** `border, crossing, line, garita, bwt`
    - **Script:** `border_wait.py`
 
-5. Send `/border` on the mesh for the default ports, or `/border <alias>`
-   (e.g. `/border mariposa`, `/border blaine`) for a specific registered
-   crossing — see **Registering ports** below for aliases.
+5. Send `/border` or `/bwt` on the mesh for the default ports, or add a
+   port name/alias after either one (e.g. `/border mariposa`,
+   `/bwt blaine`) for a specific registered crossing — see
+   **Registering ports** below for aliases.
 
 ## Registering ports (Mexico and Canada crossings)
 
@@ -208,6 +222,16 @@ default reply, so:
   + Ready + Commercial), consider trimming `lanes` to the ones your users
   actually ask about rather than relying on the script's truncation, which
   is a blunt last resort and can cut off a reply mid-word.
+- **Deploying the same script for multiple communities?** MeshMonitor's
+  Auto-Responder trigger pattern is set per-source, and this script
+  already scans the full message text for any registered alias — so you
+  don't have to touch `DEFAULT_PORTS` or run separate copies of the
+  script to give each mesh its own default. Just set that source's
+  trigger pattern to the relevant port's alias directly, e.g. a mesh near
+  Blaine could use trigger pattern `blaine, peacearch` instead of
+  `border, crossing, line, garita, bwt`. One `/blaine` on that mesh then
+  reports only Peace Arch, automatically, from the exact same
+  `border_wait.py` file and `PORTS` config everyone else is running.
 
 ## Notes
 
