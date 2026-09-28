@@ -13,7 +13,7 @@ import urllib.error
 import urllib.request
 
 API_URL = "https://bwt.cbp.gov/api/waittimes"
-HEADERS = {"User-Agent": "MeshMonitor-US-BorderWait/4.0"}
+HEADERS = {"User-Agent": "MeshMonitor-US-BorderWait/4.0.1"}
 TIMEOUT = 8
 MAX_REPLY_CHARS = 195
 
