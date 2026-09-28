@@ -121,7 +121,7 @@ def crossing_line(port):
         parts.append(f"🚶{ped}")
 
     if not parts:
-        return None
+        return f"🟢 {name} · {hours} · waits pending"
 
     return f"🟢 {name} · {hours} · {' '.join(parts)}"
 
