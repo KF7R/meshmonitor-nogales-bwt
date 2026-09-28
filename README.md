@@ -142,6 +142,31 @@ Configure a MeshMonitor Auto Responder to invoke `border_wait.py` for the desire
 - Targets a compact 195-character reply budget before using multiple MeshMonitor responses.
 - Does not transmit commercial lane data.
 
+## Future improvements
+
+### Individual POE / crossing commands (planned for v4.1)
+
+The current `/<port>border` commands intentionally return all CBP crossings grouped under the requested port. This works well for smaller ports, but ports such as El Paso, Brownsville, Laredo, Nogales, Buffalo/Niagara Falls, Detroit and others can contain several individual crossings and may generate multiple Meshtastic response messages.
+
+A future v4.1 enhancement is planned to support **individual POE/crossing commands** while preserving the existing grouped port commands. For example:
+
+```text
+/elpasoborder       → all El Paso crossings
+/botaborder         → Bridge of the Americas only
+/pdnborder          → Paso Del Norte only
+/stantonborder      → Stanton DCL only
+/ysletaborder       → Ysleta only
+
+/nogalesborder      → all Nogales crossings
+/deconciniborder    → DeConcini only
+/mariposaborder     → Mariposa only
+/morleyborder       → Morley Gate only
+```
+
+The intended resolver design is to recognize individual CBP `crossing_name` values and friendly crossing aliases before falling back to the existing `port_name` resolver. This should remain backward-compatible with the current commands.
+
+The goal is to let Meshtastic users request only the crossing they need, reducing unnecessary radio traffic and avoiding multiple response packets for ports with many entries.
+
 ## Requirements
 
 - Python 3
