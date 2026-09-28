@@ -20,10 +20,16 @@ MAX_REPLY_CHARS = 195
 # Friendly command aliases for CBP port names that are awkward or commonly
 # known by another city name. All other CBP port names resolve dynamically.
 ALIASES = {
+    # Mexico
+    "douglas": "douglasraulhectorcastro",
+    "sandiego": "sanysidro",
+    "roma": "roma",
+    # Canada
     "buffalo": "buffaloniagarafalls",
     "niagara": "buffaloniagarafalls",
     "niagarafalls": "buffaloniagarafalls",
-    "sandiego": "sanysidro",
+    "sault": "saultstemarie",
+    "saultstemarie": "saultstemarie",
 }
 
 def normalize(value):
