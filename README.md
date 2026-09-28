@@ -72,7 +72,7 @@ CBP may group several crossings under one port. For example, `/nogalesborder` ca
 
 Commercial traffic is intentionally omitted.
 
-Closed ports show `CLOSED` and their published hours instead of stale lane waits. Open CBP records with no usable Standard, Ready Lane, SENTRI/NEXUS, or pedestrian wait data are omitted. Records whose lane data is only `Update Pending` therefore do not report a false zero-minute wait.
+Closed ports show `CLOSED` and their published hours instead of stale lane waits. Open CBP records with no usable Standard, Ready Lane, SENTRI/NEXUS, or pedestrian wait data remain visible as `waits pending`. This preserves the crossing's open status without turning `Update Pending` or missing lane data into a false zero-minute wait.
 
 Example:
 
@@ -136,7 +136,7 @@ Configure a MeshMonitor Auto Responder to invoke `border_wait.py` for the desire
 - Treats an explicitly closed lane as unavailable even if stale numeric data exists.
 - Shows only lane categories with usable current data.
 - Labels the trusted-traveler lane `SENTRI` for Mexico and `NEXUS` for Canada.
-- Suppresses open CBP records that contain no useful passenger or pedestrian wait data.
+- Keeps open CBP records visible as `waits pending` when no usable passenger or pedestrian wait is available.
 - Does not show stale lane waits when the overall port is closed.
 - Uses an 8-second HTTP timeout.
 - Targets a compact 195-character reply budget before using multiple MeshMonitor responses.
