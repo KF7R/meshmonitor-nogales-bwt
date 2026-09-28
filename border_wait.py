@@ -54,7 +54,13 @@ def lane_wait(lane):
 
 def crossing_line(port):
     name = (port.get("crossing_name") or port.get("port_name") or "POE").strip()
+    if name.lower() == "deconcini":
+        name = "DeConcini"
+
     hours = (port.get("hours") or "hours n/a").strip()
+    hours = hours.replace("24 hrs/day", "24 hrs")
+    hours = re.sub(r"\s+(am|pm)", r"\1", hours, flags=re.I)
+
     is_open = str(port.get("port_status", "")).lower() == "open"
     status = "🟢" if is_open else "🔴"
     if not is_open:
@@ -63,17 +69,25 @@ def crossing_line(port):
     passenger = port.get("passenger_vehicle_lanes") or {}
     pedestrian = port.get("pedestrian_lanes") or {}
     parts = []
+
     standard = lane_wait(passenger.get("standard_lanes"))
+    ready = lane_wait(passenger.get("ready_lanes"))
     sentri = lane_wait(passenger.get("NEXUS_SENTRI_lanes"))
     ped = lane_wait(pedestrian.get("standard_lanes"))
+
     if standard and standard != "closed":
         parts.append(f"🚗{standard}")
+    if ready and ready != "closed":
+        parts.append(f"READY {ready}")
     if sentri and sentri != "closed":
-        parts.append(f"🛃{sentri}")
+        parts.append(f"SENTRI {sentri}")
     if ped and ped != "closed":
         parts.append(f"🚶{ped}")
-    detail = " ".join(parts) if parts else "waits unavailable"
-    return f"{status} {name} · {hours} · {detail}"
+
+    if not parts:
+        return None
+
+    return f"{status} {name} · {hours} · {' '.join(parts)}"
 
 def build_report(data, command, cbp_name):
     matches = [
@@ -83,12 +97,15 @@ def build_report(data, command, cbp_name):
     ]
     if not matches:
         return f"🛂 {command.title()} Border: CBP data unavailable."
-    title = f"🛂 {command.title()} Border"
-    lines = [title] + [crossing_line(p) for p in matches]
+
+    lines = [line for p in matches if (line := crossing_line(p))]
+    if not lines:
+        return f"🛂 {command.title()} Border: waits unavailable."
+
     message = "\n".join(lines)
     if len(message) <= MAX_REPLY_CHARS:
         return message
-    return [title] + [crossing_line(p) for p in matches]
+    return lines
 
 def main():
     command, cbp_name = requested_town()
