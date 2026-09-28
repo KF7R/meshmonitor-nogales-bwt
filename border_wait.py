@@ -44,12 +44,24 @@ def requested_command():
 
 def resolve_ports(data, command):
     wanted = ALIASES.get(command, command)
-    return [
+    border_ports = [
         p for p in data
-        if normalize(p.get("port_name", "")) == wanted
-        and p.get("border") in ("Mexican Border", "Canadian Border")
+        if p.get("border") in ("Mexican Border", "Canadian Border")
     ]
 
+    exact = [
+        p for p in border_ports
+        if normalize(p.get("port_name", "")) == wanted
+    ]
+    if exact:
+        return exact
+
+    prefix = [
+        p for p in border_ports
+        if normalize(p.get("port_name", "")).startswith(wanted)
+    ]
+    port_names = {normalize(p.get("port_name", "")) for p in prefix}
+    return prefix if len(port_names) == 1 else []
 def lane_wait(lane):
     if not lane:
         return None
