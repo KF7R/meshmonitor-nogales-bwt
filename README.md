@@ -128,44 +128,6 @@ MeshMonitor's script **Run Test** screen can confirm the exact text that would b
 
 Configure a MeshMonitor Auto Responder to invoke `border_wait.py` for the desired commands.
 
-## Alternative setup: MeshMonitor Automation Engine
-
-MeshMonitor 4.16.1 can also run the responder through the **Automation Engine**. This is an alternative to configuring the script through the older Auto Responder/script-trigger workflow; the existing setup above remains supported.
-
-The same `border_wait.py` file and public CBP feed are used. No CBP API key is required.
-
-### Basic Automation Engine flow
-
-Create an automation that listens for the desired `/<port>border` command and uses this flow:
-
-```text
-Message trigger → Run Script (border_wait.py) → Send Message
-```
-
-For the **Run Script** action:
-
-- Script: `border_wait.py`
-- Store the script result in a JSON variable, for example `border_wait`.
-- The incoming Meshtastic message is exposed to the script as `MESSAGE`; the script resolves commands such as `/nogalesborder`, `/detroitborder`, and the other commands listed above.
-
-The script returns one of these JSON shapes:
-
-```json
-{"response":"<reply text>"}
-```
-
-or, when a grouped port needs more than one Meshtastic-sized reply:
-
-```json
-{"responses":["<reply 1>","<reply 2>","<reply 3>"]}
-```
-
-For a single response, configure **Send Message** to send the stored `response` value. For a `responses` array, add conditional branches and separate **Send Message** actions for the array entries you want to relay. A short pause between sequential messages is recommended to avoid sending several packets back-to-back.
-
-This approach keeps the CBP lookup and formatting in the responder while letting MeshMonitor handle the Meshtastic transmission. It does **not** require modifying MeshMonitor source code.
-
-> **Note:** MeshMonitor's Automation Engine test/dry-run is useful for validating the graph, but a live message test is the final check that the reply is transmitted on the intended source and channel.
-
 ## Behavior
 
 - Uses CBP `port_status` for open/closed state rather than guessing from the current clock.
